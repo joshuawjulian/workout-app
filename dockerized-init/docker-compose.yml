@@ -1,0 +1,47 @@
+# Universal Development Environment
+# Supports any Node.js framework with PostgreSQL database
+services:
+  app:
+    build:
+      context: .
+      target: development
+    ports:
+      - '5173:5173' # Vite/SvelteKit dev server
+      - '3000:3000' # Next.js/Express alternative port
+    volumes:
+      # Source code for live editing
+      - .:/app
+      # Named volume for node_modules performance + bind mount for IDE
+      - node_modules:/app/node_modules
+      - ./node_modules:/host/node_modules # For IDE intellisense
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://postgres:password@db:5432/myapp
+    depends_on:
+      - db
+    networks:
+      - dev_network
+    # Keep container running for exec commands
+    stdin_open: true
+    tty: true
+
+  db:
+    image: postgres:16-alpine
+    ports:
+      - '5432:5432' # Exposed for development tools
+    environment:
+      - POSTGRES_DB=myapp
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - dev_network
+
+volumes:
+  node_modules: # Performance: node_modules in container
+  postgres_data: # Persist database between runs
+
+networks:
+  dev_network:
+    driver: bridge

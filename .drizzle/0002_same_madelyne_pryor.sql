@@ -1,0 +1,2 @@
+ALTER TABLE "sessions" DROP CONSTRAINT "one_active_token_per_user";--> statement-breakpoint
+CREATE UNIQUE INDEX "one_active_token_per_user" ON "sessions" USING btree ("user_id") WHERE "sessions"."valid" = true;

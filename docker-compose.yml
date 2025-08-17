@@ -1,0 +1,45 @@
+# Development configuration
+services:
+  app:
+    build:
+      context: .
+      target: development
+    ports:
+      - '5173:5173' # SvelteKit dev server
+    volumes:
+      # Source code for live editing
+      - .:/app
+      # Named volume for node_modules performance + bind mount for IDE
+      - node_modules:/app/node_modules
+      - ./node_modules:/host/node_modules # For IDE intellisense
+    environment:
+      - NODE_ENV=development
+      - POSTGRES_URL=postgresql://postgres:password@db:5432/workout
+    depends_on:
+      - db
+    networks:
+      - workout_network
+    # Keep container running for exec commands
+    stdin_open: true
+    tty: true
+
+  db:
+    image: postgres:17.6-alpine
+    ports:
+      - '5432:5432' # Exposed for development tools
+    environment:
+      - POSTGRES_DB=workout
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - workout_network
+
+volumes:
+  node_modules: # Performance: node_modules in container
+  postgres_data: # Persist database between runs
+
+networks:
+  workout_network:
+    driver: bridge

@@ -1,0 +1,18 @@
+# Production overrides - use with: docker-compose -f docker-compose.yml -f docker-compose.prod.yml up
+services:
+  app:
+    volumes:
+      # Remove source code mount and node_modules bind mount for production
+      - node_modules:/app/node_modules
+    environment:
+      - NODE_ENV=production
+    # Remove development-only settings
+    stdin_open: false
+    tty: false
+
+  db:
+    # Remove exposed port for security
+    ports: []
+    environment:
+      # Use secure password from environment or secrets
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-changeme}
