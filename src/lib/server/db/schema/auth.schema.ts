@@ -9,8 +9,12 @@ import {
 	uniqueIndex,
 	uuid
 } from 'drizzle-orm/pg-core';
-import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
+import { createSelectSchema } from 'drizzle-zod';
 import { z } from 'zod';
+
+/**
+ * Table USERS
+ */
 
 export const users = pgTable('users', {
 	id: uuid('id').primaryKey().defaultRandom(),
@@ -20,10 +24,34 @@ export const users = pgTable('users', {
 	updatedAt: timestamp('updated_at').defaultNow().notNull()
 });
 
-export const userSelectSchema = createSelectSchema(users);
+export const rawUserSchema = z.object({
+	id: z.uuid(),
+	email: z.email(),
+	password_hash: z.string(),
+	created_at: z.coerce.date(),
+	updated_at: z.coerce.date()
+});
+
+export const userSelectSchema = rawUserSchema.transform(
+	({ password_hash, created_at, updated_at, ...rest }) => ({
+		...rest,
+		passwordHash: password_hash,
+		createdAt: created_at,
+		updatedAt: updated_at
+	})
+);
+
 export type UserSelectType = z.infer<typeof userSelectSchema>;
-export const userInsertSchema = createInsertSchema(users);
+export const userInsertSchema = rawUserSchema.partial({
+	id: true,
+	created_at: true,
+	updated_at: true
+});
 export type UserInsertType = z.infer<typeof userInsertSchema>;
+
+/**
+ * TABLE users_email_confirmed
+ */
 
 export const usersEmailConfirmed = pgTable('users_email_confirmed', {
 	userId: uuid('user_id')
@@ -34,6 +62,26 @@ export const usersEmailConfirmed = pgTable('users_email_confirmed', {
 	createdAt: timestamp('created_at').defaultNow().notNull(),
 	updatedAt: timestamp('updated_at').defaultNow().notNull()
 });
+
+export const rawUserEmailConfirmedSchema = z.object({
+	userId: z.uuid(),
+	confirmed: z.boolean(),
+	token: z.string(),
+	created_at: z.coerce.date(),
+	updated_at: z.coerce.date()
+});
+
+export const userEmailConfirmedSelectSchema = rawUserEmailConfirmedSchema.transform(
+	({ created_at, updated_at, ...rest }) => ({
+		...rest,
+		createdAt: created_at,
+		updatedAt: updated_at
+	})
+);
+
+/**
+ * TABLE sessions
+ */
 
 export const sessions = pgTable(
 	'sessions',
@@ -56,8 +104,36 @@ export const sessions = pgTable(
 	]
 );
 
-export const sessionsSelectSchema = createSelectSchema(sessions);
-export type SessionsSelectType = z.infer<typeof sessionsSelectSchema>;
+export const sessionSchema = z.object({
+	id: z.uuid(),
+	user_id: z.uuid(),
+	refresh_token: z.string(),
+	created_at: z.coerce.date(),
+	expires_at: z.coerce.date(),
+	valid: z.boolean()
+});
+
+export const sessionSelectSchema = sessionSchema.transform(
+	({ created_at, expires_at, user_id, refresh_token, ...rest }) => ({
+		...rest,
+		userId: user_id,
+		createdAt: created_at,
+		refreshToken: refresh_token,
+		expiresAt: expires_at
+	})
+);
+
+export type SessionsSelectType = z.infer<typeof sessionSelectSchema>;
+
+export const sessionInsertSchema = sessionSchema.partial({
+	id: true,
+	created_at: true,
+	expires_at: true
+});
+
+/**
+ * Table: Website
+ */
 
 export const websiteRolesEnum = pgEnum('website_roles_enum', ['super', 'admin', 'user']);
 
