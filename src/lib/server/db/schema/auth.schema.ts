@@ -9,7 +9,7 @@ import {
 	uniqueIndex,
 	uuid
 } from 'drizzle-orm/pg-core';
-import { createSelectSchema } from 'drizzle-zod';
+import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { z } from 'zod';
 
 /**
@@ -90,7 +90,7 @@ export const sessions = pgTable(
 		userId: uuid('user_id')
 			.references(() => users.id)
 			.notNull(),
-		resfreshToken: text('refresh_token').notNull(),
+		refreshToken: text('refresh_token').notNull(),
 		createdAt: timestamp('created_at').defaultNow().notNull(),
 		expiresAt: timestamp('expires_at', { withTimezone: true })
 			.notNull()
@@ -104,33 +104,13 @@ export const sessions = pgTable(
 	]
 );
 
-export const sessionSchema = z.object({
-	id: z.uuid(),
-	user_id: z.uuid(),
-	refresh_token: z.string(),
-	created_at: z.coerce.date(),
-	expires_at: z.coerce.date(),
-	valid: z.boolean()
-});
+export const sessionSelectSchema = createSelectSchema(sessions);
 
-export const sessionSelectSchema = sessionSchema.transform(
-	({ created_at, expires_at, user_id, refresh_token, ...rest }) => ({
-		...rest,
-		userId: user_id,
-		createdAt: created_at,
-		refreshToken: refresh_token,
-		expiresAt: expires_at
-	})
-);
+export type SessionSelectType = z.infer<typeof sessionSelectSchema>;
 
-export type SessionsSelectType = z.infer<typeof sessionSelectSchema>;
+export const sessionInsertSchema = createInsertSchema(sessions);
 
-export const sessionInsertSchema = sessionSchema.partial({
-	id: true,
-	created_at: true,
-	expires_at: true
-});
-
+export type SessionInsertType = z.infer<typeof sessionInsertSchema>;
 /**
  * Table: Website
  */

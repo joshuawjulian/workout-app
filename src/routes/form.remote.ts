@@ -1,6 +1,7 @@
 import { form, getRequestEvent, query } from '$app/server';
 import { resetUserTokens } from '$lib/server/auth';
-import { getAllUsers, registerNewUser, validateLogin } from '$lib/server/db/services/auth.services';
+import { getAllUsers } from '$lib/server/db/queries/users';
+import { registerNewUser, validateLogin } from '$lib/server/db/services/auth';
 import { redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 

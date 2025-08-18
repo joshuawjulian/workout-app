@@ -1,7 +1,7 @@
 // check if auth token is good. If not, try to refresh with refresh token
 
 import { resetUserTokens, UserPayloadSchema } from '$lib/server/auth';
-import { getSessionByRefreshToken } from '$lib/server/db/models/session.model';
+import { getSessionByRefreshToken } from '$lib/server/db/queries/sessions';
 import type { Handle } from '@sveltejs/kit';
 import jwt from 'jsonwebtoken';
 

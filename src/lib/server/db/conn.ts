@@ -2,14 +2,20 @@
 import { env } from '$env/dynamic/private';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
+import * as authSchema from './schema/auth.schema';
 
 const connectionString = env.POSTGRES_URL;
 if (!connectionString) {
 	throw new Error('POSTGRES_URL environment variable is not set');
 }
 
+const schema = {
+	...authSchema,
+	// Add other schemas here as they're created
+};
+
 export const sql = postgres(connectionString, {
 	max: 1, // Set the maximum number of connections to 1
 	idle_timeout: 1000 // Set the idle timeout to 1 second
 });
-export const db = drizzle(sql);
+export const db = drizzle(sql, { schema });
