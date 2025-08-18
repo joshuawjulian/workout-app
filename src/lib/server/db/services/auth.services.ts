@@ -1,7 +1,11 @@
 import { hashPassword, type UserPayloadType } from '$lib/server/auth';
 import { sql } from '$lib/server/db/conn';
 import * as argon2 from 'argon2';
-import { websiteRolesSelectSchema, type SessionsSelectType } from '../schema/auth.schema';
+import {
+	userSelectSchema,
+	websiteRolesSelectSchema,
+	type SessionsSelectType
+} from '../schema/auth.schema';
 
 export const registerNewUser = async (email: string, password: string) => {
 	const hash = await hashPassword(password);
@@ -23,7 +27,7 @@ export const registerNewUser = async (email: string, password: string) => {
 
 export const validateLogin = async (email: string, password: string): Promise<string | null> => {
 	const row = await sql`
-		SELECT id, password_hash FROM users WHERE email = ${email} LIMIT 1;
+		SELECT * FROM users WHERE email = ${email} LIMIT 1;
 	`;
 
 	if (row.length === 0) {
@@ -31,9 +35,11 @@ export const validateLogin = async (email: string, password: string): Promise<st
 		return null;
 	}
 
-	const user = row[0];
+	const user = userSelectSchema.parse(row[0]);
 
-	const isValid = argon2.verify(user.password_hash, password);
+	console.log('validateLogin():' + user.passwordHash);
+
+	const isValid = argon2.verify(user.passwordHash, password);
 
 	if (!isValid) {
 		console.log('validateLogin(): Invalid password');

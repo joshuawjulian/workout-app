@@ -1,8 +1,8 @@
 # Development stage
-FROM oven/bun:1 as development
+FROM oven/bun:1 AS development
 
 # Install git (needed for some packages) and other tools
-RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
+#RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /app

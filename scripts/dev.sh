@@ -135,7 +135,7 @@ case "$1" in
     
     # Sync dependencies to host for IDE intellisense
     echo "🔄 Syncing dependencies to host for IDE..."
-    docker-compose exec app /sync-deps.sh
+    docker-compose exec -u root app /sync-deps.sh
     ;;
   "add-dev")
     # Add a dev dependency (shorthand for add --dev)
@@ -148,7 +148,7 @@ case "$1" in
     
     # Sync dependencies to host for IDE intellisense
     echo "🔄 Syncing dependencies to host for IDE..."
-    docker-compose exec app /sync-deps.sh
+    docker-compose exec -u root app /sync-deps.sh
     ;;
   "install")
     # Install all dependencies from package.json
@@ -157,7 +157,7 @@ case "$1" in
     
     # Sync dependencies to host for IDE intellisense
     echo "🔄 Syncing dependencies to host for IDE..."
-    docker-compose exec app /sync-deps.sh
+    docker-compose exec -u root app /sync-deps.sh
     ;;
   "sync")
     # Manually sync dependencies from container to host

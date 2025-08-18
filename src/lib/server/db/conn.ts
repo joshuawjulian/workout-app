@@ -7,8 +7,18 @@ const connectionString = env.POSTGRES_URL;
 if (!connectionString) {
 	throw new Error('POSTGRES_URL environment variable is not set');
 }
+
+const snakeToCamel = (s: string) => {
+	return s.replace(/(_\w)/g, (m) => m[1].toUpperCase());
+};
+
 export const sql = postgres(connectionString, {
 	max: 1, // Set the maximum number of connections to 1
-	idle_timeout: 1000 // Set the idle timeout to 1 second
+	idle_timeout: 1000, // Set the idle timeout to 1 second
+	transform: {
+		column: (column) => {
+			return snakeToCamel(column);
+		}
+	}
 });
 export const db = drizzle(sql);
