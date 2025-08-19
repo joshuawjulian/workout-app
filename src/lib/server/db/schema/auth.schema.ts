@@ -16,7 +16,7 @@ import { z } from 'zod';
  * Table USERS
  */
 
-export const users = pgTable('users', {
+export const usersTable = pgTable('users', {
 	id: uuid('id').primaryKey().defaultRandom(),
 	email: text('email').notNull().unique(),
 	passwordHash: text('password_hash').notNull(),
@@ -24,29 +24,9 @@ export const users = pgTable('users', {
 	updatedAt: timestamp('updated_at').defaultNow().notNull()
 });
 
-export const rawUserSchema = z.object({
-	id: z.uuid(),
-	email: z.email(),
-	password_hash: z.string(),
-	created_at: z.coerce.date(),
-	updated_at: z.coerce.date()
-});
-
-export const userSelectSchema = rawUserSchema.transform(
-	({ password_hash, created_at, updated_at, ...rest }) => ({
-		...rest,
-		passwordHash: password_hash,
-		createdAt: created_at,
-		updatedAt: updated_at
-	})
-);
-
+export const userSelectSchema = createSelectSchema(usersTable);
 export type UserSelectType = z.infer<typeof userSelectSchema>;
-export const userInsertSchema = rawUserSchema.partial({
-	id: true,
-	created_at: true,
-	updated_at: true
-});
+export const userInsertSchema = createInsertSchema(usersTable);
 export type UserInsertType = z.infer<typeof userInsertSchema>;
 
 /**
@@ -56,7 +36,7 @@ export type UserInsertType = z.infer<typeof userInsertSchema>;
 export const usersEmailConfirmed = pgTable('users_email_confirmed', {
 	userId: uuid('user_id')
 		.notNull()
-		.references(() => users.id),
+		.references(() => usersTable.id),
 	confirmed: boolean('confirmed').notNull().default(false),
 	token: text('token'),
 	createdAt: timestamp('created_at').defaultNow().notNull(),
@@ -83,12 +63,12 @@ export const userEmailConfirmedSelectSchema = rawUserEmailConfirmedSchema.transf
  * TABLE sessions
  */
 
-export const sessions = pgTable(
+export const sessionsTable = pgTable(
 	'sessions',
 	{
 		id: uuid('id').primaryKey().defaultRandom(),
 		userId: uuid('user_id')
-			.references(() => users.id)
+			.references(() => usersTable.id)
 			.notNull(),
 		refreshToken: text('refresh_token').notNull(),
 		createdAt: timestamp('created_at').defaultNow().notNull(),
@@ -104,27 +84,19 @@ export const sessions = pgTable(
 	]
 );
 
-export const sessionSelectSchema = createSelectSchema(sessions);
-
+export const sessionSelectSchema = createSelectSchema(sessionsTable);
 export type SessionSelectType = z.infer<typeof sessionSelectSchema>;
-
-export const sessionInsertSchema = createInsertSchema(sessions);
-
+export const sessionInsertSchema = createInsertSchema(sessionsTable);
 export type SessionInsertType = z.infer<typeof sessionInsertSchema>;
-/**
- * Table: Website
- */
 
 export const websiteRolesEnum = pgEnum('website_roles_enum', ['super', 'admin', 'user']);
-
 export const websiteRolesEnumSchema = z.enum(websiteRolesEnum.enumValues);
-
 export type WebsiteRolesEnumType = z.infer<typeof websiteRolesEnumSchema>;
 
-export const websiteRoles = pgTable(
+export const websiteRolesTable = pgTable(
 	'website_roles',
 	{
-		userId: uuid('user_id').references(() => users.id),
+		userId: uuid('user_id').references(() => usersTable.id),
 		role: websiteRolesEnum().notNull().default('user'),
 		createdAt: timestamp('created_at').defaultNow().notNull(),
 		updatedAt: timestamp('updated_at').defaultNow().notNull()
@@ -132,5 +104,5 @@ export const websiteRoles = pgTable(
 	(t) => [primaryKey({ name: 'pk_website_roles', columns: [t.userId, t.role] })]
 );
 
-export const websiteRolesSelectSchema = createSelectSchema(websiteRoles);
+export const websiteRolesSelectSchema = createSelectSchema(websiteRolesTable);
 export type WebsiteRolesSelectType = z.infer<typeof websiteRolesSelectSchema>;

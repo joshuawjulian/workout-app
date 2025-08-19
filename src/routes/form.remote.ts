@@ -124,5 +124,8 @@ export const loginUser = form(async (data: FormData): Promise<FormResponseType> 
 });
 
 export const allUsers = query(async () => {
-	return await getAllUsers();
+	console.log('allUsers(): before');
+	const all = await getAllUsers();
+	console.log('allUsers(): after');
+	return all;
 });

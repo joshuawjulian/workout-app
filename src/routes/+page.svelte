@@ -1,19 +1,20 @@
 <script lang="ts">
-	import { getLoggedInEmail } from '$lib/user.remote';
+	import { getLoggedInEmail, isLoggedIn } from '$lib/user.remote';
 	import { allUsers, loginUser, signupUser } from './form.remote';
 </script>
 
-<svelte:boundary>
-	{#snippet pending()}
-		<p>Loading...</p>
-	{/snippet}
-	{#if (await getLoggedInEmail()).success}
-		<div class="w-full h-full flex items-center justify-center">
-			<h1 class="text-2xl font-bold">Welcome back, {await getLoggedInEmail().email}!</h1>
-			<p class="text-lg">You are logged in.</p>
-		</div>
-	{:else}
-		<div class="w-full h-full flex items-center justify-center">
+<div class="w-full h-full flex flex-col items-center justify-center">
+	<svelte:boundary>
+		{#snippet pending()}
+			<p>Loading...</p>
+		{/snippet}
+		{#if await isLoggedIn()}
+			<div class="flex flex-col">
+				<h1 class="text-2xl font-bold">Welcome back, {await getLoggedInEmail()}!</h1>
+				<p class="text-lg">You are logged in.</p>
+				<p><a href="/api/logout">Logout</a></p>
+			</div>
+		{:else}
 			<div class="tabs tabs-box w-120">
 				<input type="radio" name="my_tabs_6" class="tab" aria-label="Login" checked />
 				<div class="tab-content bg-base-100 border-base-300 p-6">
@@ -71,17 +72,17 @@
 					</form>
 				</div>
 			</div>
-		</div>
-		<div class="w-full h-full flex flex-col items-center justify-center">
-			<h1 class="text-2xl font-bold">Users</h1>
-			<svelte:boundary>
-				{#each await allUsers() as user}
-					<p>{user.email}</p>
-				{/each}
-				{#snippet pending()}
-					<p>Loading...</p>
-				{/snippet}
-			</svelte:boundary>
-		</div>
-	{/if}
-</svelte:boundary>
+			<div class="w-full h-full flex flex-col items-center justify-center">
+				<h1 class="text-2xl font-bold">Users</h1>
+				<svelte:boundary>
+					{#snippet pending()}
+						<p>Loading...</p>
+					{/snippet}
+					{#each await allUsers() as user}
+						<p>{user.email}</p>
+					{/each}
+				</svelte:boundary>
+			</div>
+		{/if}
+	</svelte:boundary>
+</div>

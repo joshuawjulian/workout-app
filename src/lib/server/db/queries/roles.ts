@@ -3,7 +3,7 @@ import type { PgTransaction } from 'drizzle-orm/pg-core';
 import { db } from '../conn';
 import {
 	usersEmailConfirmed,
-	websiteRoles,
+	websiteRolesTable,
 	type WebsiteRolesSelectType
 } from '../schema/auth.schema';
 
@@ -13,7 +13,10 @@ export const insertWebsiteRole = async (
 	tx?: PgTransaction<any, any, any>
 ): Promise<WebsiteRolesSelectType> => {
 	const dbInstance = tx || db;
-	const [websiteRole] = await dbInstance.insert(websiteRoles).values({ userId, role }).returning();
+	const [websiteRole] = await dbInstance
+		.insert(websiteRolesTable)
+		.values({ userId, role })
+		.returning();
 
 	return websiteRole;
 };
@@ -21,7 +24,10 @@ export const insertWebsiteRole = async (
 export const getWebsiteRoleByUserId = async (
 	userId: string
 ): Promise<WebsiteRolesSelectType | null> => {
-	const [role] = await db.select().from(websiteRoles).where(eq(websiteRoles.userId, userId));
+	const [role] = await db
+		.select()
+		.from(websiteRolesTable)
+		.where(eq(websiteRolesTable.userId, userId));
 
 	return role || null;
 };

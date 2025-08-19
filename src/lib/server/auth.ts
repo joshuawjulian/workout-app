@@ -1,21 +1,20 @@
-import type { Cookies } from '@sveltejs/kit';
+import { type Cookies } from '@sveltejs/kit';
 import * as argon2 from 'argon2';
 import 'dotenv/config';
 import jwt from 'jsonwebtoken';
 import z from 'zod';
-import { websiteRolesEnumSchema, type SessionSelectType } from './db/schema/auth.schema';
+import { type SessionSelectType } from './db/schema/auth.schema';
 import { generateRefreshToken, getUserPayload } from './db/services/auth';
 
 export const hashPassword = async (password: string): Promise<string> => {
 	return await argon2.hash(password);
 };
 
-export const UserPayloadSchema = z.object({
-	id: z.string(),
-	websiteRole: websiteRolesEnumSchema
+export const userPayloadSchema = z.object({
+	id: z.string()
 });
 
-export type UserPayloadType = z.infer<typeof UserPayloadSchema>;
+export type UserPayloadType = z.infer<typeof userPayloadSchema>;
 
 export const generateAccessToken = async (userId: string): Promise<string> => {
 	const payload = await getUserPayload(userId);
@@ -23,6 +22,20 @@ export const generateAccessToken = async (userId: string): Promise<string> => {
 		expiresIn: '15m',
 		algorithm: 'HS256'
 	});
+};
+
+export const getUserPayloadFromToken = (accessToken: string) => {
+	try {
+		const results = userPayloadSchema.safeParse(
+			jwt.verify(accessToken, process.env.ACCESS_TOKEN_SIGN || '')
+		);
+		if (results.success) return results.data;
+		throw new Error(results.error.message);
+	} catch (error) {
+		//log and rethrow
+		console.error('getUserPayloadFromToken:', error);
+		throw error;
+	}
 };
 
 export const generateTokens = async (
