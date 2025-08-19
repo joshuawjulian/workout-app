@@ -120,7 +120,7 @@ export const loginUser = form(async (data: FormData): Promise<FormResponseType> 
 	console.log(`Login successful for user: ${email} - ${result}`);
 	await resetUserTokens(result, cookies);
 
-	redirect(303, '/');
+	redirect(303, '/app/dashboard');
 });
 
 export const allUsers = query(async () => {
