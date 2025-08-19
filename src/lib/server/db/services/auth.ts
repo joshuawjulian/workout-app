@@ -7,15 +7,18 @@ import * as userQueries from '../queries/users';
 import { websiteRolesSelectSchema, type SessionSelectType } from '../schema/auth.schema';
 
 export const registerNewUser = async (email: string, password: string) => {
+	console.log('registerNewUser(): Registering new user with email:', email);
+
 	const hash = await hashPassword(password);
 
 	return await db.transaction(async (tx) => {
-		const user = await userQueries.insertUser(email, hash);
+		const user = await userQueries.insertUser(email, hash, tx);
 
-		await roleQueries.insertWebsiteRole(user.id, 'user');
+		await roleQueries.insertWebsiteRole(user.id, 'user', tx);
 
-		await roleQueries.insertEmailConfirmation(user.id, true);
+		await roleQueries.insertEmailConfirmation(user.id, true, undefined, tx);
 
+		console.log('registerNewUser(): Successfully created user:', user.id);
 		return user;
 	});
 };

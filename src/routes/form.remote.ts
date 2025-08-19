@@ -70,9 +70,18 @@ export const signupUser = form(async (data: FormData): Promise<FormResponseType>
 	// 		message: passwordresult.error.issues[0].message
 	// 	};
 	// }
-	const result = await registerNewUser(email, password);
-
-	return { success: true };
+	try {
+		const result = await registerNewUser(email, password);
+		console.log('signupUser(): Registration successful for:', email);
+		return { success: true };
+	} catch (error) {
+		console.error('signupUser(): Registration failed:', error);
+		return {
+			success: false,
+			field: 'email',
+			message: error instanceof Error ? error.message : 'Registration failed'
+		};
+	}
 });
 
 export const loginUser = form(async (data: FormData): Promise<FormResponseType> => {

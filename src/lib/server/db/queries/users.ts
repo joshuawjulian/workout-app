@@ -1,12 +1,15 @@
 import { db } from '../conn';
 import { eq } from 'drizzle-orm';
 import { users, type UserSelectType } from '../schema/auth.schema';
+import type { PgTransaction } from 'drizzle-orm/pg-core';
 
 export const insertUser = async (
 	email: string,
-	passwordHash: string
+	passwordHash: string,
+	tx?: PgTransaction<any, any, any>
 ): Promise<UserSelectType> => {
-	const [user] = await db
+	const dbInstance = tx || db;
+	const [user] = await dbInstance
 		.insert(users)
 		.values({ email, passwordHash })
 		.returning();
