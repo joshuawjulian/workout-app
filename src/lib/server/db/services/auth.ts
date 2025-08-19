@@ -7,7 +7,6 @@ import * as userQueries from '../queries/users';
 import { websiteRolesSelectSchema, type SessionSelectType } from '../schema/auth.schema';
 
 export const registerNewUser = async (email: string, password: string) => {
-	console.log('registerNewUser(): Registering new user with email:', email);
 
 	const hash = await hashPassword(password);
 
@@ -18,7 +17,6 @@ export const registerNewUser = async (email: string, password: string) => {
 
 		await roleQueries.insertEmailConfirmation(user.id, true, undefined, tx);
 
-		console.log('registerNewUser(): Successfully created user:', user.id);
 		return user;
 	});
 };
@@ -27,16 +25,14 @@ export const validateLogin = async (email: string, password: string): Promise<st
 	const user = await userQueries.getUserByEmail(email);
 
 	if (!user) {
-		console.log('validateLogin(): User not found');
+		// Perform dummy hash operation to prevent timing attacks
+		await argon2.verify('$argon2id$v=19$m=65536,t=3,p=4$dummy$dummy', password);
 		return null;
 	}
-
-	console.log('validateLogin():' + user.passwordHash);
 
 	const isValid = await argon2.verify(user.passwordHash, password);
 
 	if (!isValid) {
-		console.log('validateLogin(): Invalid password');
 		return null;
 	}
 
@@ -46,11 +42,9 @@ export const validateLogin = async (email: string, password: string): Promise<st
 export const getUserPayload = async (userId: string): Promise<UserPayloadType> => {
 	const role = await roleQueries.getWebsiteRoleByUserId(userId);
 
-	console.log(JSON.stringify(role));
 	if (role === null) throw new Error('getUserPayload(): didnt return a user');
 
 	const result = websiteRolesSelectSchema.safeParse(role);
-	console.log('getUserPayload():', result);
 	if (!result.success) {
 		throw new Error('getUserPayload(): ' + result.error.message);
 	}
@@ -64,9 +58,16 @@ export const getUserPayload = async (userId: string): Promise<UserPayloadType> =
 export const generateRefreshToken = async (userId: string): Promise<SessionSelectType> => {
 	return await db.transaction(async (tx) => {
 		const invalidatedCount = await sessionQueries.invalidateAllRefreshTokens(userId);
-		console.log('generateRefreshToken(): Invalidated', invalidatedCount, 'tokens for user', userId);
+		if (invalidatedCount === 0) {
+			// No existing sessions to invalidate, which is fine for new users
+		}
 
-		const session = await sessionQueries.insertSession(userId, crypto.randomUUID(), true);
+		// Generate cryptographically secure random token (32 bytes = 256 bits)
+		const tokenBytes = new Uint8Array(32);
+		crypto.getRandomValues(tokenBytes);
+		const refreshToken = Array.from(tokenBytes, byte => byte.toString(16).padStart(2, '0')).join('');
+		
+		const session = await sessionQueries.insertSession(userId, refreshToken, true);
 
 		if (!session) {
 			throw new Error('generateRefreshToken(): Failed to generate refresh token');

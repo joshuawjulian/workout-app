@@ -11,14 +11,20 @@ export const hashPassword = async (password: string): Promise<string> => {
 };
 
 export const userPayloadSchema = z.object({
-	id: z.string()
+	id: z.string(),
+	websiteRole: z.enum(['super', 'admin', 'user'])
 });
 
 export type UserPayloadType = z.infer<typeof userPayloadSchema>;
 
 export const generateAccessToken = async (userId: string): Promise<string> => {
+	const jwtSecret = process.env.ACCESS_TOKEN_SIGN;
+	if (!jwtSecret) {
+		throw new Error('ACCESS_TOKEN_SIGN environment variable is required');
+	}
+	
 	const payload = await getUserPayload(userId);
-	return jwt.sign(payload, process.env.ACCESS_TOKEN_SIGN || '', {
+	return jwt.sign(payload, jwtSecret, {
 		expiresIn: '15m',
 		algorithm: 'HS256'
 	});
@@ -26,14 +32,17 @@ export const generateAccessToken = async (userId: string): Promise<string> => {
 
 export const getUserPayloadFromToken = (accessToken: string) => {
 	try {
+		const jwtSecret = process.env.ACCESS_TOKEN_SIGN;
+		if (!jwtSecret) {
+			throw new Error('ACCESS_TOKEN_SIGN environment variable is required');
+		}
+		
 		const results = userPayloadSchema.safeParse(
-			jwt.verify(accessToken, process.env.ACCESS_TOKEN_SIGN || '')
+			jwt.verify(accessToken, jwtSecret)
 		);
 		if (results.success) return results.data;
 		throw new Error(results.error.message);
 	} catch (error) {
-		//log and rethrow
-		console.error('getUserPayloadFromToken:', error);
 		throw error;
 	}
 };
@@ -45,7 +54,12 @@ export const generateTokens = async (
 		throw new Error('generateTokens(): userId is required');
 	}
 
-	// check that userId exists in the database
+	// Verify user exists in database before generating tokens
+	const { getUserById } = await import('./db/queries/users');
+	const user = await getUserById(userId);
+	if (!user) {
+		throw new Error('generateTokens(): User does not exist');
+	}
 
 	const session = await generateRefreshToken(userId);
 	const accessToken = await generateAccessToken(userId);

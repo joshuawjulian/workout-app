@@ -16,14 +16,22 @@ export const handle: Handle = async ({ event, resolve }) => {
 		const payload = getUserPayloadFromToken(accessToken);
 		event.locals.user = await getUserById(payload.id);
 	} catch (error) {
-		console.error(error);
 		const refreshToken = cookies.get('refresh_token');
 		if (!refreshToken) {
 			event.locals.user = null;
 		} else {
 			const session = await getSessionByRefreshToken(refreshToken);
 			if (session) {
-				await resetUserTokens(session.userId, cookies);
+				// Verify user still exists before resetting tokens
+				const user = await getUserById(session.userId);
+				if (user) {
+					await resetUserTokens(session.userId, cookies);
+					event.locals.user = user;
+				} else {
+					event.locals.user = null;
+				}
+			} else {
+				event.locals.user = null;
 			}
 		}
 	}

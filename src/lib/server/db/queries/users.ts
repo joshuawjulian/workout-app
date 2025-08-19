@@ -27,8 +27,6 @@ export const getUserByEmail = async (email: string): Promise<UserSelectType | nu
 };
 
 export const getAllUsers = async (): Promise<UserSelectType[]> => {
-	console.log('getAllUsers(): before');
 	const result = await db.select().from(usersTable);
-	console.log('getAllUsers(): after');
 	return result;
 };
