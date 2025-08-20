@@ -62,8 +62,9 @@
 			<!-- Admin Access -->
 			<li class="menu-title text-lg font-bold p-2">Dictionary Tables</li>
 			<li><a href="/app/movement-patterns">Movement Patterns</a></li>
-			<li><a href="#!">M</a></li>
-			<li><a href="#!">Movement Patterns</a></li>
+			<li><a href="#!">Movements</a></li>
+			<li><a href="#!">Equipment</a></li>
+			<li><a href="#!">Goals</a></li>
 		</ul>
 	</div>
 </div>
