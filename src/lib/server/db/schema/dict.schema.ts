@@ -23,24 +23,54 @@ export const movementsTable = pgTable('movements', {
 	parentMovementId: uuid('parent_movement_id')
 });
 
-export const movementParentRelations = relations(movementsTable, ({ one, many }) => ({
+export const movementsToMovementPatternsTable = pgTable('movements_to_movement_patterns', {
+	id: uuid('id').notNull().primaryKey().defaultRandom(),
+	movementId: uuid('movement_id')
+		.notNull()
+		.references(() => movementsTable.id),
+	movementPatternId: uuid('movement_pattern_id')
+		.notNull()
+		.references(() => movementPatternsTable.id)
+});
+
+export const movementsRelations = relations(movementsTable, ({ one, many }) => ({
 	parentMovement: one(movementsTable, {
 		fields: [movementsTable.parentMovementId],
 		references: [movementsTable.id],
 		relationName: 'parentMovement'
 	}),
-
 	childrenMovements: many(movementsTable, {
 		relationName: 'parentMovement'
-	})
+	}),
+	movementsToMovementPatterns: many(movementsToMovementPatternsTable)
 }));
+
+export const movementPatternsRelations = relations(movementPatternsTable, ({ many }) => ({
+	movementsToMovementPatterns: many(movementsToMovementPatternsTable)
+}));
+
+export const movementsToMovementPatternsRelations = relations(
+	movementsToMovementPatternsTable,
+	({ one }) => ({
+		movement: one(movementsTable, {
+			fields: [movementsToMovementPatternsTable.movementId],
+			references: [movementsTable.id]
+		}),
+		movementPattern: one(movementPatternsTable, {
+			fields: [movementsToMovementPatternsTable.movementPatternId],
+			references: [movementPatternsTable.id]
+		})
+	})
+);
 
 export const movementsSelectSchema = createSelectSchema(movementsTable);
 export type MovementsSelectType = z.infer<typeof movementsSelectSchema>;
 export const movementsInsertSchema = createInsertSchema(movementsTable, {
-	youtubeUrl: z.url()
+	youtubeUrl: z.string().url()
 });
 export type MovementsInsertType = z.infer<typeof movementsInsertSchema>;
+export const movementsUpdateSchema = createUpdateSchema(movementsTable);
+export type MovementsUpdateType = z.infer<typeof movementsUpdateSchema>;
 
 export const equipmentTable = pgTable('equipment', {
 	id: uuid('id').primaryKey().defaultRandom(),

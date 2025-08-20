@@ -1,4 +1,5 @@
 import { db } from '$lib/server/db/conn';
+import { eq } from 'drizzle-orm';
 import {
 	movementPatternsTable,
 	type MovementPatternsInsertType,
@@ -25,7 +26,22 @@ export const insertMovementPattern = async (
 export const updateMovementPattern = async (
 	pattern: MovementPatternsUpdateType
 ): Promise<MovementPatternsSelectType> => {
-	const [updatedPattern] = await db.update(movementPatternsTable).set(pattern);
+	if (!pattern.id) {
+		throw new Error('ID is required to update a movement pattern');
+	}
+	const [updatedPattern] = await db
+		.update(movementPatternsTable)
+		.set(pattern)
+		.where(eq(movementPatternsTable.id, pattern.id))
+		.returning();
 
 	return updatedPattern;
+};
+
+export const deleteMovementPattern = async (id: string): Promise<MovementPatternsSelectType> => {
+	const [deletedPattern] = await db
+		.delete(movementPatternsTable)
+		.where(eq(movementPatternsTable.id, id))
+		.returning();
+	return deletedPattern;
 };

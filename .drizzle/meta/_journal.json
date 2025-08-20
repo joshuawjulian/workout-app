@@ -50,6 +50,13 @@
       "when": 1755693985259,
       "tag": "0006_empty_anita_blake",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1755732130754,
+      "tag": "0007_round_stone_men",
+      "breakpoints": true
     }
   ]
 }

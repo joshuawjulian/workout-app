@@ -39,3 +39,13 @@ export const updatePattern = form(async (data) => {
 		updatedPattern
 	};
 });
+
+export const deletePattern = form(async (data) => {
+	const id = data.get('id');
+	if (!id) error(400, 'Missing id');
+	const deletedPattern = await movementPatternsQueries.deleteMovementPattern(id as string);
+
+	return {
+		deletedPattern
+	};
+});
