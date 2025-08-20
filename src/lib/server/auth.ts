@@ -88,7 +88,7 @@ export const resetUserTokens = async (userId: string, cookies: Cookies): Promise
 		httpOnly: true,
 		secure: process.env.NODE_ENV === 'production',
 		sameSite: 'strict',
-		maxAge: 60 * 15 // 15 minutes
+		maxAge: 10 //60 * 15 // 15 minutes
 	});
 
 	cookies.set('refresh_token', session.refreshToken, {

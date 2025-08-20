@@ -15,15 +15,16 @@ const activeRefreshPromises = new Map<string, Promise<UserSelectType>>();
 export const handle: Handle = async ({ event, resolve }) => {
 	const cookies = event.cookies;
 	const accessToken = cookies.get('access_token');
+	const refreshToken = cookies.get('refresh_token');
 
-	if (accessToken === undefined) {
-		console.log('hooks.server.ts - accessToken === undefined');
+	if (accessToken === undefined && refreshToken === undefined) {
+		console.log('hooks.server.ts - accessToken and refreshToken are undefined');
 		event.locals.user = null;
 		return await resolve(event);
 	}
 	console.log('hooks.server.ts - accessToken is defined');
 
-	if (!isTokenExpired(accessToken)) {
+	if (accessToken !== undefined && !isTokenExpired(accessToken)) {
 		console.log('hooks.server.ts - accessToken is not expired');
 		const payload = getUserPayloadFromToken(accessToken);
 
@@ -33,7 +34,6 @@ export const handle: Handle = async ({ event, resolve }) => {
 	}
 	console.log('hooks.server.ts - accessToken is expired');
 
-	const refreshToken = cookies.get('refresh_token');
 	if (refreshToken === undefined) {
 		console.log('hooks.server.ts - refreshToken === undefined');
 		event.locals.user = null;
