@@ -2,6 +2,7 @@
 import { env } from '$env/dynamic/private';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import * as authSchema from './schema/auth.schema';
+import * as dictSchema from './schema/dict.schema';
 
 const connectionString = env.POSTGRES_URL;
 if (!connectionString) {
@@ -9,7 +10,8 @@ if (!connectionString) {
 }
 
 const schema = {
-	...authSchema
+	...authSchema,
+	...dictSchema
 	// Add other schemas here as they're created
 };
 

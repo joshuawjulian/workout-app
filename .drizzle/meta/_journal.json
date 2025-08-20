@@ -22,6 +22,34 @@
       "when": 1755472296034,
       "tag": "0002_same_madelyne_pryor",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1755691566283,
+      "tag": "0003_daffy_randall_flagg",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1755693811483,
+      "tag": "0004_gorgeous_the_captain",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1755693902636,
+      "tag": "0005_next_vector",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1755693985259,
+      "tag": "0006_empty_anita_blake",
+      "breakpoints": true
     }
   ]
 }

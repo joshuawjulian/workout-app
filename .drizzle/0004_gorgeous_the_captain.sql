@@ -1,0 +1,1 @@
+ALTER TABLE "movement_patterns" ADD COLUMN "description" text NOT NULL;

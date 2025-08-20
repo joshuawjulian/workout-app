@@ -8,6 +8,7 @@ import type { Handle } from '@sveltejs/kit';
 export const handle: Handle = async ({ event, resolve }) => {
 	const cookies = event.cookies;
 	const accessToken = cookies.get('access_token');
+	console.log('accessToken = ' + accessToken);
 	if (!accessToken) {
 		event.locals.user = null;
 		return await resolve(event);

@@ -1,0 +1,1 @@
+ALTER TABLE "movement_patterns" ALTER COLUMN "description" SET DEFAULT 'fix me';
