@@ -2,7 +2,8 @@ import { db } from '$lib/server/db/conn';
 import {
 	movementPatternsTable,
 	type MovementPatternsInsertType,
-	type MovementPatternsSelectType
+	type MovementPatternsSelectType,
+	type MovementPatternsUpdateType
 } from '../schema/dict.schema';
 
 export const getAllMovementPatterns = async (): Promise<MovementPatternsSelectType[]> => {
@@ -19,4 +20,12 @@ export const insertMovementPattern = async (
 	const [insertedPattern] = await db.insert(movementPatternsTable).values(pattern).returning();
 
 	return insertedPattern;
+};
+
+export const updateMovementPattern = async (
+	pattern: MovementPatternsUpdateType
+): Promise<MovementPatternsSelectType> => {
+	const [updatedPattern] = await db.update(movementPatternsTable).set(pattern);
+
+	return updatedPattern;
 };

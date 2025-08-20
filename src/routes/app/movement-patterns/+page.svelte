@@ -12,17 +12,18 @@
 	{#snippet pending()}
 		<p>Loading...</p>
 	{/snippet}
-	<ul>
+	<ul class="mb-2">
 		{#each await allPatterns() as pattern}
-			<li>{pattern.name}</li>
+			<li><button class="btn">{pattern.name}</button></li>
 		{/each}
 	</ul>
 
-	<form {...createPattern}>
-		<label>
-			<h2>Movement Pattern Name</h2>
-			<input name="name" />
+	<form {...createPattern} class="flex flex-col">
+		<label class="input mb-2">
+			Name
+			<input name="name" class="grow" />
 		</label>
-		<button>Add Movement Pattern</button>
+		<textarea class="textarea mb-2" placeholder="Description" name="description"></textarea>
+		<button class="btn btn-primary">Add Movement Pattern</button>
 	</form>
 </svelte:boundary>
