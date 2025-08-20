@@ -3,8 +3,9 @@ import * as argon2 from 'argon2';
 import 'dotenv/config';
 import jwt from 'jsonwebtoken';
 import z from 'zod';
-import { type SessionSelectType } from './db/schema/auth.schema';
-import { generateRefreshToken, getUserPayload } from './db/services/auth';
+import { getUserById } from './db/queries/users';
+import { type SessionSelectType, type UserSelectType } from './db/schema/auth.schema';
+import { generateRefreshToken, getSessionByRefreshToken, getUserPayload } from './db/services/auth';
 
 export const hashPassword = async (password: string): Promise<string> => {
 	return await argon2.hash(password);
@@ -22,10 +23,10 @@ export const generateAccessToken = async (userId: string): Promise<string> => {
 	if (!jwtSecret) {
 		throw new Error('ACCESS_TOKEN_SIGN environment variable is required');
 	}
-	
+
 	const payload = await getUserPayload(userId);
 	return jwt.sign(payload, jwtSecret, {
-		expiresIn: '15m',
+		expiresIn: '10s',
 		algorithm: 'HS256'
 	});
 };
@@ -36,10 +37,8 @@ export const getUserPayloadFromToken = (accessToken: string) => {
 		if (!jwtSecret) {
 			throw new Error('ACCESS_TOKEN_SIGN environment variable is required');
 		}
-		
-		const results = userPayloadSchema.safeParse(
-			jwt.verify(accessToken, jwtSecret)
-		);
+
+		const results = userPayloadSchema.safeParse(jwt.verify(accessToken, jwtSecret));
 		if (results.success) return results.data;
 		throw new Error(results.error.message);
 	} catch (error) {
@@ -70,6 +69,18 @@ export const generateTokens = async (
 	};
 };
 
+export const refreshTokens = async (
+	refreshToken: string,
+	cookies: Cookies
+): Promise<UserSelectType> => {
+	const session = await getSessionByRefreshToken(refreshToken);
+	if (session === null) throw new Error('resfreshTokens(): session === null');
+	const user = await getUserById(session.userId);
+	if (user === null) throw new Error('resfreshTokens(): user === null');
+	await resetUserTokens(session.userId, cookies);
+	return user;
+};
+
 export const resetUserTokens = async (userId: string, cookies: Cookies): Promise<void> => {
 	const { accessToken, session } = await generateTokens(userId);
 	cookies.set('access_token', accessToken, {
@@ -87,4 +98,18 @@ export const resetUserTokens = async (userId: string, cookies: Cookies): Promise
 		sameSite: 'strict',
 		maxAge: session.expiresAt.getTime() - Date.now()
 	});
+};
+
+export const isTokenExpired = (token: string): boolean => {
+	try {
+		const decodedToken = jwt.decode(token);
+		if (decodedToken === null || typeof decodedToken === 'string') return true;
+		const currentTime = Date.now() / 1000; // Convert to seconds
+		const exp = decodedToken.exp;
+		if (exp === undefined) return true;
+		return exp < currentTime;
+	} catch (error) {
+		// Handle invalid token format or other decoding errors
+		return true;
+	}
 };

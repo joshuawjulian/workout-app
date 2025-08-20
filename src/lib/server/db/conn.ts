@@ -15,4 +15,4 @@ const schema = {
 	// Add other schemas here as they're created
 };
 
-export const db = drizzle(connectionString, { logger: true, schema });
+export const db = drizzle(connectionString, { logger: false, schema });
