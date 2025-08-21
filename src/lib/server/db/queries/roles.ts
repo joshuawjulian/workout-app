@@ -1,11 +1,11 @@
 import { eq } from 'drizzle-orm';
 import type { PgTransaction } from 'drizzle-orm/pg-core';
-import { db } from '../conn';
 import {
 	usersEmailConfirmed,
 	websiteRolesTable,
 	type WebsiteRolesSelectType
-} from '../schema/auth.schema';
+} from '../../../schema/auth.schema';
+import { db } from '../conn';
 
 export const insertWebsiteRole = async (
 	userId: string,

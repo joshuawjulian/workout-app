@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { allUsers, loginUser, signupUser } from './form.remote';
+	import { allUsers } from '$lib/user.remote';
+	import { loginUser, signupUser } from './form.remote';
 </script>
 
 <div class="w-full h-full flex flex-col items-center justify-center">

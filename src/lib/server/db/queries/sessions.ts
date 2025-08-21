@@ -1,6 +1,6 @@
 import { and, eq } from 'drizzle-orm';
+import { sessionsTable, type SessionSelectType } from '../../../schema/auth.schema';
 import { db } from '../conn';
-import { sessionsTable, type SessionSelectType } from '../schema/auth.schema';
 
 export const getSessionByRefreshToken = async (
 	refreshToken: string

@@ -1,0 +1,1 @@
+ALTER TABLE "website_roles" ALTER COLUMN "user_id" SET NOT NULL;

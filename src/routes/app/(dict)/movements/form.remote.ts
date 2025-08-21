@@ -1,7 +1,7 @@
 import { form, query } from '$app/server';
+import { movementsInsertSchema, movementsUpdateSchema } from '$lib/schema/dict.schema';
 import * as movementsQueries from '$lib/server/db/queries/movements';
 import { getAllMovements } from '$lib/server/db/queries/movements';
-import { movementsInsertSchema, movementsUpdateSchema } from '$lib/server/db/schema/dict.schema';
 import { error } from '@sveltejs/kit';
 
 export const allMovements = query(async () => {

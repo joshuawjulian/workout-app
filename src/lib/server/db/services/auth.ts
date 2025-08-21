@@ -1,13 +1,12 @@
 import { hashPassword, type UserPayloadType } from '$lib/server/auth';
 import * as argon2 from 'argon2';
+import { websiteRolesSelectSchema, type SessionSelectType } from '../../../schema/auth.schema';
 import { db } from '../conn';
 import * as roleQueries from '../queries/roles';
 import * as sessionQueries from '../queries/sessions';
 import * as userQueries from '../queries/users';
-import { websiteRolesSelectSchema, type SessionSelectType } from '../schema/auth.schema';
 
 export const registerNewUser = async (email: string, password: string) => {
-
 	const hash = await hashPassword(password);
 
 	return await db.transaction(async (tx) => {
@@ -65,8 +64,11 @@ export const generateRefreshToken = async (userId: string): Promise<SessionSelec
 		// Generate cryptographically secure random token (32 bytes = 256 bits)
 		const tokenBytes = new Uint8Array(32);
 		crypto.getRandomValues(tokenBytes);
-		const refreshToken = Array.from(tokenBytes, byte => byte.toString(16).padStart(2, '0')).join('');
-		
+		const refreshToken = Array.from(tokenBytes, (byte) => byte.toString(16).padStart(2, '0')).join(
+			''
+		);
+		console.log(`refreshToken generated = ${refreshToken}`);
+
 		const session = await sessionQueries.insertSession(userId, refreshToken, true);
 
 		if (!session) {
@@ -76,8 +78,3 @@ export const generateRefreshToken = async (userId: string): Promise<SessionSelec
 		return session;
 	});
 };
-
-// Re-export session functions for convenience
-export const invalidateRefreshToken = sessionQueries.invalidateRefreshToken;
-export const invalidateAllRefreshTokens = sessionQueries.invalidateAllRefreshTokens;
-export const getSessionByRefreshToken = sessionQueries.getSessionByRefreshToken;

@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm';
 import type { PgTransaction } from 'drizzle-orm/pg-core';
+import { usersTable, type UserSelectType } from '../../../schema/auth.schema';
 import { db } from '../conn';
-import { usersTable, type UserSelectType } from '../schema/auth.schema';
 
 export const insertUser = async (
 	email: string,

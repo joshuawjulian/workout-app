@@ -1,6 +1,5 @@
-import { form, getRequestEvent, query } from '$app/server';
+import { form, getRequestEvent } from '$app/server';
 import { resetUserTokens } from '$lib/server/auth';
-import { getAllUsers } from '$lib/server/db/queries/users';
 import { registerNewUser, validateLogin } from '$lib/server/db/services/auth';
 import { redirect } from '@sveltejs/kit';
 import { z } from 'zod';
@@ -121,11 +120,4 @@ export const loginUser = form(async (data: FormData): Promise<FormResponseType> 
 	await resetUserTokens(result, cookies);
 
 	redirect(303, '/app/dashboard');
-});
-
-export const allUsers = query(async () => {
-	console.log('allUsers(): before');
-	const all = await getAllUsers();
-	console.log('allUsers(): after');
-	return all;
 });

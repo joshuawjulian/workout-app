@@ -47,7 +47,7 @@
 	</div>
 
 	<!-- Sidebar Content -->
-	<div class="drawer-side">
+	<div class="drawer-side shadow-xl">
 		<!-- The overlay darkens the main content when the drawer is open on mobile -->
 		<label for="my-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
 
@@ -60,9 +60,13 @@
 			<li class="menu-title text-4xl font-bold p-2 mb-2">Workout App</li>
 
 			<!-- Admin Access -->
+			<li class="menu-title text-lg font-bold p-2">Admin Tables</li>
+			<li><a href="/app/users">User</a></li>
+
+			<!-- Admin and Editor -->
 			<li class="menu-title text-lg font-bold p-2">Dictionary Tables</li>
 			<li><a href="/app/movement-patterns">Movement Patterns</a></li>
-			<li><a href="#!">Movements</a></li>
+			<li><a href="/app/movements">Movements</a></li>
 			<li><a href="#!">Equipment</a></li>
 			<li><a href="#!">Goals</a></li>
 		</ul>

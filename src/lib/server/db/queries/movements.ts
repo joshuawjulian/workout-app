@@ -6,7 +6,7 @@ import {
 	type MovementsInsertType,
 	type MovementsSelectType,
 	type MovementsUpdateType
-} from '../schema/dict.schema';
+} from '../../../schema/dict.schema';
 
 export const getAllMovements = async (): Promise<MovementsSelectType[]> => {
 	const movements: MovementsSelectType[] = await db.query.movementsTable.findMany({

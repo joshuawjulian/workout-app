@@ -1,10 +1,10 @@
 import { form, query } from '$app/server';
-import * as movementPatternsQueries from '$lib/server/db/queries/movementPatterns';
-import { getAllMovementPatterns } from '$lib/server/db/queries/movementPatterns';
 import {
 	movementPatternsInsertSchema,
 	movementPatternsUpdateSchema
-} from '$lib/server/db/schema/dict.schema';
+} from '$lib/schema/dict.schema';
+import * as movementPatternsQueries from '$lib/server/db/queries/movementPatterns';
+import { getAllMovementPatterns } from '$lib/server/db/queries/movementPatterns';
 import { error } from '@sveltejs/kit';
 
 export const allPatterns = query(async () => {

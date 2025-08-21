@@ -5,7 +5,7 @@ import {
 	type MovementPatternsInsertType,
 	type MovementPatternsSelectType,
 	type MovementPatternsUpdateType
-} from '../schema/dict.schema';
+} from '../../../schema/dict.schema';
 
 export const getAllMovementPatterns = async (): Promise<MovementPatternsSelectType[]> => {
 	const movementPatterns: MovementPatternsSelectType[] = await db

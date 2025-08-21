@@ -1,4 +1,4 @@
-import { sql } from 'drizzle-orm';
+import { relations, sql } from 'drizzle-orm';
 import {
 	boolean,
 	pgEnum,
@@ -96,7 +96,9 @@ export type WebsiteRolesEnumType = z.infer<typeof websiteRolesEnumSchema>;
 export const websiteRolesTable = pgTable(
 	'website_roles',
 	{
-		userId: uuid('user_id').references(() => usersTable.id),
+		userId: uuid('user_id')
+			.notNull()
+			.references(() => usersTable.id),
 		role: websiteRolesEnum().notNull().default('user'),
 		createdAt: timestamp('created_at').defaultNow().notNull(),
 		updatedAt: timestamp('updated_at').defaultNow().notNull()
@@ -106,3 +108,19 @@ export const websiteRolesTable = pgTable(
 
 export const websiteRolesSelectSchema = createSelectSchema(websiteRolesTable);
 export type WebsiteRolesSelectType = z.infer<typeof websiteRolesSelectSchema>;
+
+export const userRelations = relations(usersTable, ({ one, many }) => ({
+	userWebsiteRole: one(websiteRolesTable, {
+		fields: [usersTable.id],
+		references: [websiteRolesTable.userId],
+		relationName: 'user_website_role'
+	})
+}));
+
+export const websiteRolesRelations = relations(websiteRolesTable, ({ one, many }) => ({
+	userWebsiteRole: one(usersTable, {
+		fields: [websiteRolesTable.userId],
+		references: [usersTable.id],
+		relationName: 'user_website_role'
+	})
+}));

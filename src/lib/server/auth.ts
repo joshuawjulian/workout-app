@@ -3,9 +3,10 @@ import * as argon2 from 'argon2';
 import 'dotenv/config';
 import jwt from 'jsonwebtoken';
 import z from 'zod';
+import { type SessionSelectType, type UserSelectType } from '../schema/auth.schema';
+import { getSessionByRefreshToken } from './db/queries/sessions';
 import { getUserById } from './db/queries/users';
-import { type SessionSelectType, type UserSelectType } from './db/schema/auth.schema';
-import { generateRefreshToken, getSessionByRefreshToken, getUserPayload } from './db/services/auth';
+import { generateRefreshToken, getUserPayload } from './db/services/auth';
 
 export const hashPassword = async (password: string): Promise<string> => {
 	return await argon2.hash(password);

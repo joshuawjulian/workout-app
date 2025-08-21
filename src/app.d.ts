@@ -1,5 +1,5 @@
 // See https://svelte.dev/docs/kit/types#app.d.ts
-import type { UserSelectType } from '$lib/server/db/schema/auth.schema';
+import type { UserSelectType } from '$lib/schema/auth.schema';
 
 // for information about these interfaces
 declare global {

@@ -1,8 +1,8 @@
 // check if auth token is good. If not, try to refresh with refresh token
 
+import type { UserSelectType } from '$lib/schema/auth.schema';
 import { getUserPayloadFromToken, isTokenExpired, refreshTokens } from '$lib/server/auth';
 import { getUserById } from '$lib/server/db/queries/users';
-import type { UserSelectType } from '$lib/server/db/schema/auth.schema';
 import type { Handle } from '@sveltejs/kit';
 
 /**

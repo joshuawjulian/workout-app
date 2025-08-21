@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { MovementPatternsSelectType } from '$lib/server/db/schema/dict.schema';
+	import type { MovementPatternsSelectType } from '$lib/schema/dict.schema';
 
 	type Item = $$Generic<MovementPatternsSelectType>;
 
@@ -159,7 +159,8 @@
 
 				<div class="modal-action">
 					<button type="button" class="btn" onclick={closeModal}>Cancel</button>
-					<button type="submit" class="btn btn-primary">{selectedItem ? 'Update' : 'Create'}</button>
+					<button type="submit" class="btn btn-primary">{selectedItem ? 'Update' : 'Create'}</button
+					>
 				</div>
 			</form>
 		</div>
