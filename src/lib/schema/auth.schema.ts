@@ -29,11 +29,24 @@ export type UserSelectType = z.infer<typeof userSelectSchema>;
 export const userInsertSchema = createInsertSchema(usersTable);
 export type UserInsertType = z.infer<typeof userInsertSchema>;
 
+export const userRelations = relations(usersTable, ({ one, many }) => ({
+	userWebsiteRole: one(websiteRolesTable, {
+		fields: [usersTable.id],
+		references: [websiteRolesTable.userId],
+		relationName: 'user_website_role'
+	}),
+	user_email_confirmed: one(usersEmailConfirmedTable, {
+		fields: [usersTable.id],
+		references: [usersEmailConfirmedTable.userId],
+		relationName: 'users_email_confirmed'
+	})
+}));
+
 /**
  * TABLE users_email_confirmed
  */
 
-export const usersEmailConfirmed = pgTable('users_email_confirmed', {
+export const usersEmailConfirmedTable = pgTable('users_email_confirmed', {
 	userId: uuid('user_id')
 		.notNull()
 		.references(() => usersTable.id),
@@ -43,21 +56,18 @@ export const usersEmailConfirmed = pgTable('users_email_confirmed', {
 	updatedAt: timestamp('updated_at').defaultNow().notNull()
 });
 
-export const rawUserEmailConfirmedSchema = z.object({
-	userId: z.uuid(),
-	confirmed: z.boolean(),
-	token: z.string(),
-	created_at: z.coerce.date(),
-	updated_at: z.coerce.date()
-});
+export const usersEmailConfirmedSelectSchema = createSelectSchema(usersEmailConfirmedTable);
+export type UsersEmailConfirmedSelectType = z.infer<typeof usersEmailConfirmedSelectSchema>;
+export const usersEmailConfirmedInsertSchema = createInsertSchema(usersEmailConfirmedTable);
+export type UsersEmailConfirmedInsertType = z.infer<typeof usersEmailConfirmedInsertSchema>;
 
-export const userEmailConfirmedSelectSchema = rawUserEmailConfirmedSchema.transform(
-	({ created_at, updated_at, ...rest }) => ({
-		...rest,
-		createdAt: created_at,
-		updatedAt: updated_at
+export const usersEmailConfirmedRelations = relations(usersEmailConfirmedTable, ({ one }) => ({
+	user_email_confirmed: one(usersTable, {
+		fields: [usersEmailConfirmedTable.userId],
+		references: [usersTable.id],
+		relationName: 'users_email_confirmed'
 	})
-);
+}));
 
 /**
  * TABLE sessions
@@ -108,14 +118,6 @@ export const websiteRolesTable = pgTable(
 
 export const websiteRolesSelectSchema = createSelectSchema(websiteRolesTable);
 export type WebsiteRolesSelectType = z.infer<typeof websiteRolesSelectSchema>;
-
-export const userRelations = relations(usersTable, ({ one, many }) => ({
-	userWebsiteRole: one(websiteRolesTable, {
-		fields: [usersTable.id],
-		references: [websiteRolesTable.userId],
-		relationName: 'user_website_role'
-	})
-}));
 
 export const websiteRolesRelations = relations(websiteRolesTable, ({ one, many }) => ({
 	userWebsiteRole: one(usersTable, {
