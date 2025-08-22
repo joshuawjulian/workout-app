@@ -1,10 +1,13 @@
-import { form, query } from '$app/server';
+import { command, form, query } from '$app/server';
 import {
 	movementPatternsInsertSchema,
+	movementPatternsTable,
 	movementPatternsUpdateSchema
 } from '$lib/schema/dict.schema';
+import { db } from '$lib/server/db/conn';
 import * as movementPatternsQueries from '$lib/server/db/queries/movementPatterns';
 import { getAllMovementPatterns } from '$lib/server/db/queries/movementPatterns';
+import { movementPatternSeeds } from '$lib/server/db/seed/movement-patterns';
 import { error } from '@sveltejs/kit';
 
 export const allPatterns = query(async () => {
@@ -48,4 +51,16 @@ export const deletePattern = form(async (data) => {
 	return {
 		deletedPattern
 	};
+});
+
+export const seedMovementPatterns = command(async () => {
+	const mps = await db.query.movementPatternsTable.findMany();
+	let seeds = movementPatternSeeds;
+	const filteredSeeds = seeds.filter((seed) => {
+		return mps.findIndex((mp) => mp.name == seed.name) == -1;
+	});
+	if (filteredSeeds.length > 0) {
+		await db.insert(movementPatternsTable).values(filteredSeeds);
+		await allPatterns().refresh();
+	}
 });

@@ -8,6 +8,7 @@ import * as userQueries from '../queries/users';
 
 export const registerNewUser = async (email: string, password: string) => {
 	const hash = await hashPassword(password);
+	console.log(`registerNewUser() : hash = ${hash}`);
 
 	return await db.transaction(async (tx) => {
 		const user = await userQueries.insertUser(email, hash, tx);

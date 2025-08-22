@@ -42,7 +42,8 @@ export const movementsRelations = relations(movementsTable, ({ one, many }) => (
 	childrenMovements: many(movementsTable, {
 		relationName: 'parentMovement'
 	}),
-	movementsToMovementPatterns: many(movementsToMovementPatternsTable)
+	movementsToMovementPatterns: many(movementsToMovementPatternsTable),
+	equipmentToMovements: many(equipmentToMovementsTable)
 }));
 
 export const movementPatternsRelations = relations(movementPatternsTable, ({ many }) => ({
@@ -76,6 +77,10 @@ export const equipmentTable = pgTable('equipment', {
 	id: uuid('id').primaryKey().defaultRandom(),
 	name: varchar('name', { length: 256 }).notNull()
 });
+
+export const equipmentRelations = relations(equipmentTable, ({ many }) => ({
+	equipmentToMovements: many(equipmentToMovementsTable)
+}));
 
 export const equipmentToMovementsTable = pgTable('equipment_to_movements', {
 	id: uuid('id').notNull().primaryKey().defaultRandom(),

@@ -70,14 +70,19 @@ export const generateTokens = async (
 	};
 };
 
+export const isRefreshTokenValid = async (refreshToken: string): Promise<boolean> => {
+	return (await getSessionByRefreshToken(refreshToken)) !== null;
+};
+
 export const refreshTokens = async (
 	refreshToken: string,
 	cookies: Cookies
 ): Promise<UserSelectType> => {
+	console.log(`refreshTokens(): ${refreshToken}`);
 	const session = await getSessionByRefreshToken(refreshToken);
-	if (session === null) throw new Error('resfreshTokens(): session === null');
+	if (session === null) throw new Error('refreshTokens(): session === null');
 	const user = await getUserById(session.userId);
-	if (user === null) throw new Error('resfreshTokens(): user === null');
+	if (user === null) throw new Error('refreshTokens(): user === null');
 	await resetUserTokens(session.userId, cookies);
 	return user;
 };

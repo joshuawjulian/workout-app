@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm';
 import type { PgTransaction } from 'drizzle-orm/pg-core';
 import {
-	usersEmailConfirmed,
+	usersEmailConfirmedTable,
 	websiteRolesTable,
 	type WebsiteRolesSelectType
 } from '../../../schema/auth.schema';
@@ -32,16 +32,16 @@ export const getWebsiteRoleByUserId = async (
 	return role || null;
 };
 
-export const insertEmailConfirmation = async (
+export async function insertEmailConfirmation(
 	userId: string,
 	confirmed: boolean = true,
 	token?: string,
 	tx?: PgTransaction<any, any, any>
-): Promise<void> => {
+): Promise<void> {
 	const dbInstance = tx || db;
-	await dbInstance.insert(usersEmailConfirmed).values({
+	await dbInstance.insert(usersEmailConfirmedTable).values({
 		userId,
 		confirmed,
 		token: token || crypto.randomUUID()
 	});
-};
+}

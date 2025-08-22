@@ -66,9 +66,11 @@
 			<!-- Admin and Editor -->
 			<li class="menu-title text-lg font-bold p-2">Dictionary Tables</li>
 			<li><a href="/app/movement-patterns">Movement Patterns</a></li>
-			<li><a href="/app/movements">Movements</a></li>
-			<li><a href="#!">Equipment</a></li>
+			<li><a href="/app/equipment">Equipment</a></li>
 			<li><a href="#!">Goals</a></li>
+
+			<li class="menu-title text-lg font-bold p-2">Joint Dictionary Tables</li>
+			<li><a href="/app/movements">Movements</a></li>
 		</ul>
 	</div>
 </div>

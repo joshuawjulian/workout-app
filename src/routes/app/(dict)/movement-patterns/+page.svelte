@@ -1,6 +1,12 @@
 <script lang="ts">
 	import Crud from '$lib/components/Crud.svelte';
-	import { allPatterns, createPattern, deletePattern, updatePattern } from './form.remote';
+	import {
+		allPatterns,
+		createPattern,
+		deletePattern,
+		seedMovementPatterns,
+		updatePattern
+	} from './form.remote';
 
 	let { data } = $props();
 	let patterns = $state(data.patterns);
@@ -14,6 +20,14 @@
 		{ name: 'description', label: 'Description', type: 'textarea' }
 	];
 </script>
+
+<button
+	class="btn btn-primary"
+	onclick={async () => {
+		await seedMovementPatterns();
+		await allPatterns().refresh();
+	}}>Seed</button
+>
 
 <Crud
 	items={patterns}

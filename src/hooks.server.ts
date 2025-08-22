@@ -43,32 +43,32 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	// Check if a refresh for this specific user is already in progress.
 	let refreshPromise = activeRefreshPromises.get(refreshToken);
-
-	if (!refreshPromise) {
-		// No refresh in progress for this user, so this request will start it.
-		console.log(`Starting new token refresh for user with token: ...${refreshToken.slice(-6)}`);
-
-		refreshPromise = refreshTokens(refreshToken, cookies).finally(() => {
-			// IMPORTANT: Clean up the map once the refresh is complete.
-			console.log(`Cleaning up refresh promise for token: ...${refreshToken.slice(-6)}`);
-			activeRefreshPromises.delete(refreshToken);
-		});
-	} else {
-		console.log(
-			`Waiting for existing token refresh for user with token: ...${refreshToken.slice(-6)}`
-		);
-	}
-	// Store the promise in the map so other parallel requests can wait for it.
-	activeRefreshPromises.set(refreshToken, refreshPromise);
 	try {
+		if (!refreshPromise) {
+			// No refresh in progress for this user, so this request will start it.
+			console.log(`Starting new token refresh for user with token: ...${refreshToken.slice(-6)}`);
+
+			refreshPromise = refreshTokens(refreshToken, cookies).finally(() => {
+				// IMPORTANT: Clean up the map once the refresh is complete.
+				console.log(`Cleaning up refresh promise for token: ...${refreshToken.slice(-6)}`);
+				activeRefreshPromises.delete(refreshToken);
+			});
+		} else {
+			console.log(
+				`Waiting for existing token refresh for user with token: ...${refreshToken.slice(-6)}`
+			);
+		}
+		// Store the promise in the map so other parallel requests can wait for it.
+		activeRefreshPromises.set(refreshToken, refreshPromise);
+
 		// Wait for the single refresh operation to complete.
 		event.locals.user = await refreshPromise;
 	} catch (error) {
 		// The refresh failed (e.g., refresh token was invalid).
 		// We must log the user out completely.
 		console.error('Token refresh failed, logging out:', error);
-		cookies.delete('accessToken', { path: '/' });
-		cookies.delete('refreshToken', { path: '/' });
+		cookies.delete('access_token', { path: '/' });
+		cookies.delete('refresh_token', { path: '/' });
 		event.locals.user = null;
 		// Proceed as a logged-out user.
 		return await resolve(event);

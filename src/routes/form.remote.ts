@@ -70,6 +70,7 @@ export const signupUser = form(async (data: FormData): Promise<FormResponseType>
 	// 	};
 	// }
 	try {
+		console.log(`Signing up ${email}`);
 		const result = await registerNewUser(email, password);
 		console.log('signupUser(): Registration successful for:', email);
 		return { success: true };
