@@ -105,3 +105,4 @@ Fully containerized development with host IDE support:
 3. Access/refresh tokens set as httpOnly cookies
 4. Server hook validates tokens on each request
 5. Automatic refresh when access token expires
+- reference remote-functions-llms.txt for the expirmental features I am using

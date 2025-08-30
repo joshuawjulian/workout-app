@@ -51,11 +51,6 @@
 		<!-- The overlay darkens the main content when the drawer is open on mobile -->
 		<label for="my-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
 
-		<!-- 
-      Sidebar Menu
-      - `w-80`: Sets the width of the sidebar.
-      - `bg-base-100`: Gives it a background color from your DaisyUI theme.
-    -->
 		<ul class="menu p-4 w-80 min-h-full bg-base-100 text-base-content">
 			<li class="menu-title text-4xl font-bold p-2 mb-2">Workout App</li>
 

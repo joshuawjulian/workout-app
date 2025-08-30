@@ -1,6 +1,7 @@
 import { form, getRequestEvent } from '$app/server';
 import { resetUserTokens } from '$lib/server/auth';
 import { registerNewUser, validateLogin } from '$lib/server/db/services/auth';
+import { allUsers } from '$lib/user.remote';
 import { redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 
@@ -73,6 +74,7 @@ export const signupUser = form(async (data: FormData): Promise<FormResponseType>
 		console.log(`Signing up ${email}`);
 		const result = await registerNewUser(email, password);
 		console.log('signupUser(): Registration successful for:', email);
+		await allUsers().refresh();
 		return { success: true };
 	} catch (error) {
 		console.error('signupUser(): Registration failed:', error);

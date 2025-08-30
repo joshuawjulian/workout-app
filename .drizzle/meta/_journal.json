@@ -64,6 +64,20 @@
       "when": 1755780085486,
       "tag": "0008_famous_nextwave",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1756407132333,
+      "tag": "0009_red_alex_power",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1756512390989,
+      "tag": "0010_marvelous_scourge",
+      "breakpoints": true
     }
   ]
 }

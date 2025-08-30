@@ -1,0 +1,1 @@
+ALTER TABLE "movements" ADD COLUMN "repetition_criteria" text;

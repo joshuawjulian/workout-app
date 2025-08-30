@@ -8,7 +8,7 @@
 		if (str.length <= maxLength) return str;
 		const frontLength = Math.ceil((maxLength - 3) / 2);
 		const backLength = Math.trunc((maxLength - 3) / 2);
-		return `${str.slice(0, frontLength)} ... ${str.slice(-1 * backLength)}`;
+		return `${str.slice(0, frontLength)}...${str.slice(-1 * backLength)}`;
 	};
 
 	const updateRole = async (userId: string, role: string | null) => {

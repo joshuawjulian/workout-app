@@ -1,0 +1,1 @@
+ALTER TABLE "movements_to_movement_patterns" ADD CONSTRAINT "movements_to_movement_patterns_unique_index" UNIQUE("movement_id","movement_pattern_id");

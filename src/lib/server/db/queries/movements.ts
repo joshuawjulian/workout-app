@@ -8,8 +8,8 @@ import {
 	type MovementsUpdateType
 } from '../../../schema/dict.schema';
 
-export const getAllMovements = async (): Promise<MovementsSelectType[]> => {
-	const movements: MovementsSelectType[] = await db.query.movementsTable.findMany({
+export const getAllMovements = async () => {
+	const movements = await db.query.movementsTable.findMany({
 		with: {
 			parentMovement: true,
 			movementsToMovementPatterns: {
@@ -19,6 +19,26 @@ export const getAllMovements = async (): Promise<MovementsSelectType[]> => {
 			}
 		}
 	});
+
+	// const mp = await db.query.movementPatternsTable.findMany();
+
+	// const randomMovementId =
+	// 	movements.length > 0 ? movements[Math.floor(Math.random() * movements.length)].id : null;
+
+	// const randomMovementPatternId =
+	// 	mp.length > 0 ? mp[Math.floor(Math.random() * mp.length)].id : null;
+
+	// console.log(randomMovementId, ' ', randomMovementPatternId);
+	// // add to movementsToMovementPatternsTable
+	// if (randomMovementId && randomMovementPatternId) {
+	// 	await db.insert(movementsToMovementPatternsTable).values({
+	// 		movementId: randomMovementId,
+	// 		movementPatternId: randomMovementPatternId
+	// 	});
+	// }
+
+	// const m2mp = await db.query.movementsToMovementPatternsTable.findMany({});
+	// console.log('m2mp', m2mp);
 
 	return movements;
 };

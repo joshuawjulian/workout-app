@@ -1,5 +1,5 @@
 import { relations } from 'drizzle-orm';
-import { pgTable, text, uuid, varchar } from 'drizzle-orm/pg-core';
+import { pgTable, text, unique, uuid, varchar } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema, createUpdateSchema } from 'drizzle-zod';
 import { z } from 'zod';
 
@@ -20,18 +20,25 @@ export const movementsTable = pgTable('movements', {
 	id: uuid('id').primaryKey().defaultRandom(),
 	name: varchar('name', { length: 256 }).notNull(),
 	youtubeUrl: varchar('youtube_url', { length: 512 }),
+	repetitionCriteria: text('repetition_criteria'),
 	parentMovementId: uuid('parent_movement_id')
 });
 
-export const movementsToMovementPatternsTable = pgTable('movements_to_movement_patterns', {
-	id: uuid('id').notNull().primaryKey().defaultRandom(),
-	movementId: uuid('movement_id')
-		.notNull()
-		.references(() => movementsTable.id),
-	movementPatternId: uuid('movement_pattern_id')
-		.notNull()
-		.references(() => movementPatternsTable.id)
-});
+export const movementsToMovementPatternsTable = pgTable(
+	'movements_to_movement_patterns',
+	{
+		id: uuid('id').notNull().primaryKey().defaultRandom(),
+		movementId: uuid('movement_id')
+			.notNull()
+			.references(() => movementsTable.id),
+		movementPatternId: uuid('movement_pattern_id')
+			.notNull()
+			.references(() => movementPatternsTable.id)
+	},
+	(t) => [
+		unique('movements_to_movement_patterns_unique_index').on(t.movementId, t.movementPatternId)
+	]
+);
 
 export const movementsRelations = relations(movementsTable, ({ one, many }) => ({
 	parentMovement: one(movementsTable, {
