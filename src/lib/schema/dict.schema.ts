@@ -85,6 +85,17 @@ export const equipmentTable = pgTable('equipment', {
 	name: varchar('name', { length: 256 }).notNull()
 });
 
+export const equipmentSelectSchema = createSelectSchema(equipmentTable);
+export type EquipmentSelectType = z.infer<typeof equipmentSelectSchema>;
+export const equipmentInsertSchema = createInsertSchema(equipmentTable);
+export type EquipmentInsertType = z.infer<typeof equipmentInsertSchema>;
+export const equipmentUpdateSchema = createUpdateSchema(equipmentTable);
+export type EquipmentUpdateType = z.infer<typeof equipmentUpdateSchema>;
+export const equipmentUpsertSchema = equipmentSelectSchema.extend({
+	id: z.uuid().nullable().optional()
+});
+export type EquipmentUpsertType = z.infer<typeof equipmentUpsertSchema>;
+
 export const equipmentRelations = relations(equipmentTable, ({ many }) => ({
 	equipmentToMovements: many(equipmentToMovementsTable)
 }));

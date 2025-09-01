@@ -28,8 +28,7 @@
 	bind:this={newMovementDialog}
 	id="newMovementModal"
 	class="modal"
-	onclose={() => (selectedItem = null)}
->
+	onclose={() => (selectedItem = null)}>
 	<div class="modal-box">
 		<form method="dialog">
 			<button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
@@ -41,24 +40,20 @@
 					type="text"
 					placeholder="Movement Name"
 					class="input input-bordered w-full"
-					name="name"
-				/>
+					name="name" />
 				<input
 					type="url"
 					placeholder="YouTube URL"
 					class="input input-bordered w-full"
-					name="youtubeUrl"
-				/>
+					name="youtubeUrl" />
 				<textarea
 					placeholder="Repetition Criteria"
 					class="input input-bordered w-full pt-2 h-24"
-					name="repetitionCriteria"
-				></textarea>
+					name="repetitionCriteria"></textarea>
 				<MultiSelect
 					options={movementPatterns.map((pattern) => ({ value: pattern.id, label: pattern.name }))}
 					selected={[]}
-					name="movementPatternIds"
-				/>
+					name="movementPatternIds" />
 				<div class="form-control">
 					<label class="label" for="parentMovementId">
 						<span class="label-text">Parent Movement</span>
@@ -66,8 +61,7 @@
 					<select
 						class="select select-bordered w-full"
 						name="parentMovementId"
-						id="parentMovementId"
-					>
+						id="parentMovementId">
 						<option value="">-- None --</option>
 						{#each movements as movement}
 							<option value={movement.id}>{movement.name}</option>
@@ -95,19 +89,17 @@
 				<tr>
 					<th>Name</th>
 					<th>Patterns</th>
-					<th>JSON</th>
+					<th>Repetition Criteria</th>
 				</tr>
 			</thead>
 			<tbody>
 				{#each movements as movement}
 					<tr>
 						<td>{movement.name}</td>
-						<td
-							>{movement.movementsToMovementPatterns
-								.map((m) => m.movementPattern.name)
-								.join(', ')}</td
-						>
-						<td>{JSON.stringify(movement, null, 2)}</td>
+						<td>
+							{movement.movementsToMovementPatterns.map((m) => m.movementPattern.name).join(', ')}
+						</td>
+						<td>{movement.repetitionCriteria}</td>
 					</tr>
 				{/each}
 			</tbody>
