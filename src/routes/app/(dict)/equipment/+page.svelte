@@ -24,12 +24,12 @@
 <div class="card bg-base-100">
 	<div class="card-body">
 		<h2 class="card-title">Equipment</h2>
-		<button class="btn btn-sm btn-primary" onclick={() => openModal()}>Add Equipment</button>
-		<button class="btn btn-sm btn-primary" onclick={async () => await allEquipment().refresh()}
-			>Refresh</button>
-		<button class="btn btn-sm btn-primary" onclick={async () => await addRandomEquipment()}>
-			Add Random Equipment
-		</button>
+		<div class="card-actions">
+			<button class="btn btn-sm btn-primary" onclick={() => openModal()}>Add Equipment</button>
+			<button class="btn btn-sm btn-primary" onclick={async () => await addRandomEquipment()}>
+				Add Random Equipment
+			</button>
+		</div>
 		<svelte:boundary>
 			{#snippet pending()}
 				<p>Loading...</p>
@@ -49,10 +49,10 @@
 							<td>{item.id}</td>
 							<td>{item.name}</td>
 							<td>
-								<button class="btn btn-sm btn-secondary" onclick={() => openModal(item)}
+								<button class="btn btn-sm btn-accent btn-ghost" onclick={() => openModal(item)}
 									>Edit</button>
 								<button
-									class="btn btn-sm btn-danger"
+									class="btn btn-sm btn-error btn-ghost"
 									onclick={async () => await deleteEquipment(item.id)}>Delete</button>
 							</td>
 						</tr>
